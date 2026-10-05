@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rowclean</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="field"></canvas>
+  <div class="wrap">
+    <header>
+      <h1>rowclean</h1>
+      <p>Paste a customer CSV. Blank names, bad emails, unknown plans, and duplicates get dropped.</p>
+    </header>
+    <div class="grid">
+      <section class="panel">
+        <form method="post" action="/clean">
+          <label for="text">Messy CSV</label>
+          <textarea id="text" name="text" required>{{ draft }}</textarea>
+          <div class="row">
+            <button type="submit">Clean</button>
+            <button class="ghost" type="submit" formaction="/sample">Load sample</button>
+          </div>
+        </form>
+      </section>
+      <section class="panel">
+        <label>Clean CSV</label>
+        {% if kept is not none %}
+        <pre>{{ output }}</pre>
+        <p>{{ kept|length }} kept · {{ rejected|length }} rejected</p>
+        {% if rejected %}
+        <table>
+          <thead><tr><th>Line</th><th>Why</th><th>Value</th></tr></thead>
+          <tbody>
+            {% for row in rejected %}
+            <tr><td>{{ row.line }}</td><td class="miss">{{ row.reason }}</td><td>{{ row.value }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        {% else %}
+        <pre>Load the sample, then clean it.</pre>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+  <script src="/static/field.js"></script>
+</body>
+</html>
